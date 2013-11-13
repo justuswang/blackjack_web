@@ -1,2 +1,2 @@
-blackjack_web
+web version blackjack game
 =============
