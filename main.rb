@@ -67,6 +67,7 @@ post '/new_player' do
 end
 
 get '/game' do
+  session[:turn] = session[:player_name]
   # deck
   suits = ['H', 'D', 'S', 'C']
   cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -107,7 +108,7 @@ end
 post '/game/player/stay' do
   @show_hit_or_stay_buttons = false
 
-  @dealer_turn = true
+  session[:turn] = 'dealer'
   redirect '/game/dealer'
 end
 
