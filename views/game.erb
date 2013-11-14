@@ -1,4 +1,4 @@
-<% if @notice || @error %>
+<% if @error || @success || @info %>
   <h5>Play again?
     <a href="/" class="btn btn-primary">Yes</a>
     <a href="/game_over" class="btn">No</a>
@@ -9,30 +9,35 @@
 
 <div class="well">
   <h4>Dealer's Cards:</h4>
-  <% first = true %>
-  <% session[:dealer_cards].each do |card| %>
-    <% if first == true && ((!@notice && !@error) || !@dealer_turn) %>
-      <% first = false %>
-      <img src="/images/cards/cover.jpg">
+  <% session[:dealer_cards].each_with_index do |card, i| %>
+    <% if i == 0 && @show_hit_or_stay_buttons %>
+      <img src="/images/cards/cover.jpg" class="card_image">
     <% else %>
-      <img src="/images/cards/<%= "#{card[0].downcase}_#{card[1].downcase}.jpg" %>">
+      <%= card_image(card) %>
     <% end %>
+  <% end %>
+
+  <% if @show_dealer_hit_button %>
+    <h5>Dealer has <%= calculate_total(session[:dealer_cards]) %> and will hit</h5>
+    <form action='/game/dealer/hit' method='post'>
+      <input type='submit' class='btn btn-primary' value="Click to see dealer card ->">
+    </form>
   <% end %>
 </div>
 
 <div class="well">
   <h4><%= session[:player_name] %>'s Cards:</h4>
   <% session[:player_cards].each do |card| %>
-    <img src="/images/cards/<%= "#{card[0].downcase}_#{card[1].downcase}.jpg" %>">
+    <%= card_image(card) %>
   <% end %>
 </div>
 
-<% if !@notice && !@error %>
+<% if @show_hit_or_stay_buttons %>
   <h4>What would you like to do? <%= session[:player_name] %> has <%= calculate_total(session[:player_cards]) %>. </h4>
-  <form action="/hit" method="post">
-    <input value="Hit" type="submit" class="btn btn-success btn-large">
+  <form id="hit_form" action="/game/player/hit" method="post">
+    <input value="Hit" type="submit" class="btn btn-success">
   </form>
-  <form action="/stay" method="post">
-    <input value="Stay" type="submit" class="btn btn-warning btn-large">
+  <form id="stay_form" action="/game/player/stay" method="post">
+    <input value="Stay" type="submit" class="btn btn-warning">
   </form>
 <% end %>
