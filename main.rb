@@ -126,10 +126,10 @@ get '/game' do
   session[:dealer_cards] << session[:deck].pop
   session[:player_cards] << session[:deck].pop
 
-  player_total = calculate_total(session[:player_cards])
-  if player_total == 21
-    winner!("#{session[:player_name]} hits blackjack.")
-  end
+  # player_total = calculate_total(session[:player_cards])
+  # if player_total == 21
+  #   winner!("#{session[:player_name]} hits blackjack.")
+  # end
   erb :game
 end
 
@@ -144,7 +144,7 @@ post '/game/player/hit' do
     loser!("It looks like #{session[:player_name]} busted at #{player_total}.")
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -168,7 +168,7 @@ get '/game/dealer' do
     @show_hit_or_stay_buttons = false
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/dealer/hit' do
@@ -188,7 +188,7 @@ get '/game/compare' do
     tie!("Both #{session[:player_name]} and the dealer stayed at #{player_total}.")
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 get '/game_over' do
