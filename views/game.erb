@@ -1,8 +1,14 @@
 <% if @play_again %>
-  <h5>Play again?
-    <a href="/bet" class="btn btn-primary">Yes</a>
-    <a href="/game_over" class="btn">No</a>
-  </h5>
+  <% if session[:player_amount] == 0 %>
+    <h5><%= session[:player_name] %> has no money to bet. Start Over?
+      <a href="/game_over" class="btn btn-primary">OK</a>
+    </h5>
+  <% else %>
+    <h5>Play again?
+      <a href="/bet" class="btn btn-primary">Yes</a>
+      <a href="/game_over" class="btn">No</a>
+    </h5>
+  <% end %>
 <% end %>
 
 <h1>Blackjack!</h1>
