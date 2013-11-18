@@ -1,6 +1,6 @@
 <% if @play_again %>
   <h5>Play again?
-    <a href="/" class="btn btn-primary">Yes</a>
+    <a href="/bet" class="btn btn-primary">Yes</a>
     <a href="/game_over" class="btn">No</a>
   </h5>
 <% end %>
@@ -33,7 +33,7 @@
 </div>
 
 <% if @show_hit_or_stay_buttons %>
-  <h4>What would you like to do? <%= session[:player_name] %> has <%= calculate_total(session[:player_cards]) %>. </h4>
+  <p><strong>What would you like to do? <%= session[:player_name] %> has <%= calculate_total(session[:player_cards]) %>.</strong> <%= session[:player_name] %> has $<%= session[:player_amount] %> total. Bet amount this round: $<%= session[:bet_amount] %></p>
   <form id="hit_form" action="/game/player/hit" method="post">
     <input value="Hit" type="submit" class="btn btn-success">
   </form>

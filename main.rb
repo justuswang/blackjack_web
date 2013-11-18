@@ -48,12 +48,14 @@ helpers do
     @success = "<strong>#{session[:player_name]} wins!</strong> #{msg}"
     @show_hit_or_stay_buttons = false
     @play_again = true
+    session[:player_amount] += session[:bet_amount]
   end
 
   def loser!(msg)
     @error = "<strong>#{session[:player_name]} loses!</strong> #{msg}"
     @show_hit_or_stay_buttons = false
     @play_again = true
+    session[:player_amount] -= session[:bet_amount]
   end
 
   def tie!(msg)
@@ -87,6 +89,24 @@ post '/new_player' do
     erb :new_player
   else
     session[:player_name] = params[:player_name]
+    session[:player_amount] = 500
+    redirect '/bet'
+  end
+end
+
+get '/bet' do
+  erb :bet
+end
+
+post '/bet' do
+  if params[:bet_amount].empty? or params[:bet_amount].to_i == 0
+    @error = "Must make a bet!"
+    erb :bet
+  elsif params[:bet_amount].to_i > session[:player_amount].to_i
+    @error = "Bet amount cannot be greater than what you have ($#{session[:player_amount]})"
+    erb :bet
+  else
+    session[:bet_amount] = params[:bet_amount].to_i
     redirect '/game'
   end
 end
