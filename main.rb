@@ -3,6 +3,10 @@ require 'sinatra'
 
 set :sessions, true
 
+BLACKJACK_TOTAL = 21
+DEALER_MIN_HIT = 17
+INITIAL_PLAYER_AMOUNT = 500
+
 helpers do
   def calculate_total(cards)
     card_values = cards.map { |e| e[1] }
@@ -17,7 +21,7 @@ helpers do
     end
 
     card_values.select { |e| e == 'A' }.count.times do
-      total += 10 if total + 10 <= 21
+      total += 10 if total + 10 <= BLACKJACK_TOTAL
     end
 
     total
@@ -89,7 +93,7 @@ post '/new_player' do
     erb :new_player
   else
     session[:player_name] = params[:player_name]
-    session[:player_amount] = 500
+    session[:player_amount] = INITIAL_PLAYER_AMOUNT
     redirect '/bet'
   end
 end
@@ -127,7 +131,7 @@ get '/game' do
   session[:player_cards] << session[:deck].pop
 
   # player_total = calculate_total(session[:player_cards])
-  # if player_total == 21
+  # if player_total == BLACKJACK_TOTAL
   #   winner!("#{session[:player_name]} hits blackjack.")
   # end
   erb :game
@@ -138,9 +142,9 @@ post '/game/player/hit' do
 
   player_total = calculate_total(session[:player_cards])
 
-  if player_total == 21
+  if player_total == BLACKJACK_TOTAL
     winner!("#{session[:player_name]} hits blackjack.")
-  elsif player_total > 21
+  elsif player_total > BLACKJACK_TOTAL
     loser!("It looks like #{session[:player_name]} busted at #{player_total}.")
   end
 
@@ -157,11 +161,11 @@ end
 get '/game/dealer' do
   dealer_total = calculate_total(session[:dealer_cards])
 
-  if dealer_total == 21
+  if dealer_total == BLACKJACK_TOTAL
     loser!("The dealer hits blackjack!")
-  elsif dealer_total > 21
+  elsif dealer_total > BLACKJACK_TOTAL
     winner!("The dealer busted at #{dealer_total}.")
-  elsif dealer_total >= 17
+  elsif dealer_total >= DEALER_MIN_HIT
     redirect '/game/compare'
   else
     @show_dealer_hit_button = true
@@ -182,7 +186,7 @@ get '/game/compare' do
 
   if dealer_total > player_total
     loser!("#{session[:player_name]} stayed at #{player_total}, and the dealer stayed at #{dealer_total}.")
-  elsif dealer_total < 21 && dealer_total < player_total
+  elsif dealer_total < BLACKJACK_TOTAL && dealer_total < player_total
     winner!("#{session[:player_name]} stayed at #{player_total}, and the dealer stayed at #{dealer_total}.")
   else
     tie!("Both #{session[:player_name]} and the dealer stayed at #{player_total}.")
